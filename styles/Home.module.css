@@ -1,0 +1,34 @@
+/* styles/Home.module.css */
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+    background-image: url('/images/background-cinderella.png'); /* O cualquier fondo temático */
+    background-size: cover;
+    background-position: center;
+  }
+  
+  /* Envolvemos los selectores h1 y p con :global() para permitir selectores globales dentro de .container */
+  .container :global(h1) {
+    font-size: 3rem;
+    margin-bottom: 0.5em;
+  }
+  
+  .container :global(p) {
+    font-size: 1.5rem;
+    margin-bottom: 1em;
+  }
+  
+  .title {
+    font-size: 3rem;
+    margin-bottom: 0.5em;
+  }
+  
+  .description {
+    font-size: 1.5rem;
+    margin-bottom: 1em;
+  }
+  
