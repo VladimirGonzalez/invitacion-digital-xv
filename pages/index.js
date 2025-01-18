@@ -4,26 +4,29 @@ import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
 
-// IMPORTS CORRECTOS
 import SongPlayer from '../components/SongPlayer';
 import ParallaxLayers from '../components/ParallaxLayers';
 import SparkleOverlay from '../components/SparkleOverlay';
 import ParticlesBackground from '../components/ParticlesBackground';
 import Countdown from '../components/Countdown';
 
-// Ejemplo: Corazones volando, estilo Cenicienta
-function ButterfliesOverlay() {
+/* 
+  1) Corazones flotando estilo Cenicienta 
+  - Reemplaza HEART.png con la imagen de corazón que tengas en /public/images.
+*/
+function HeartsOverlay() {
     const containerRef = useRef(null);
 
     useEffect(() => {
         if (!containerRef.current) return;
-        const count = 6; // número de corazones (antes mariposas)
+
+        const count = 6;
         const hearts = [];
 
         for (let i = 0; i < count; i++) {
             const heart = document.createElement('img');
-            heart.src = '/images/HEART.png'; // Asegúrate de tener esta imagen
-            heart.className = 'butterfly-anim';
+            heart.src = '/images/HEART.png';
+            heart.className = 'heart-anim';
             containerRef.current.appendChild(heart);
             hearts.push(heart);
         }
@@ -38,6 +41,7 @@ function ButterfliesOverlay() {
                 opacity: 0,
                 zIndex: 25,
             });
+
             gsap.to(hf, {
                 delay,
                 duration: gsap.utils.random(8, 12),
@@ -48,13 +52,12 @@ function ButterfliesOverlay() {
                 repeatDelay: 3,
                 yoyo: true,
                 onRepeat: () => {
-                    gsap.set(hf, {
-                        left: gsap.utils.random(0, 100) + 'vw',
-                    });
+                    gsap.set(hf, { left: gsap.utils.random(0, 100) + 'vw' });
                 },
             });
         });
 
+        // Limpieza
         return () => {
             while (containerRef.current.firstChild) {
                 containerRef.current.removeChild(containerRef.current.firstChild);
@@ -70,9 +73,10 @@ function ButterfliesOverlay() {
     );
 }
 
+// =============== PRINCIPAL ===============
 export default function Home() {
     return (
-        <div className="relative w-full min-h-screen overflow-hidden md:overflow-auto text-shadow-sm">
+        <div className="relative w-full min-h-screen overflow-hidden text-shadow-sm bg-black">
             <Head>
                 <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Merriweather:wght@300;400&display=swap');
@@ -103,23 +107,21 @@ export default function Home() {
         }
       `}</style>
 
-            {/* 1. Capas de Parallax (fondo) - z-0 */}
-            <div className="absolute inset-0 z-0">
+            {/* 1. Parallax de fondo */}
+            <div className="absolute inset-0 z-0 opacity-80">
                 <ParallaxLayers />
             </div>
 
-            {/* 2. Fondo de Partículas Mágicas - z-10 */}
+            {/* 2. Partículas + Sparkle */}
             <div className="absolute inset-0 z-10 pointer-events-none">
                 <ParticlesBackground />
             </div>
-
-            {/* 3. Destellos superpuestos (SparkleOverlay) - z-20 */}
             <SparkleOverlay />
 
-            {/* 3.5. Corazones flotando (z-25) */}
-            <ButterfliesOverlay />
+            {/* 3. Corazones flotando */}
+            <HeartsOverlay />
 
-            {/* 4. Sección del Sobre (z-30) */}
+            {/* 4. Contenido principal */}
             <div className="relative z-30">
                 <EnvelopeSection />
             </div>
@@ -127,19 +129,13 @@ export default function Home() {
     );
 }
 
-/**
- * EnvelopeSection
- * - Sobre animado con GSAP + sonido mágico
- * - Al abrir, muestra la tarjeta de invitación
- * - Reproduce música en loop
- * - Lanza estrellitas doradas (MagicStars)
- */
+// ============== SOBRE ANIMADO =============
 function EnvelopeSection() {
     const [isOpen, setIsOpen] = useState(false);
     const [showStars, setShowStars] = useState(false);
     const envelopeRef = useRef(null);
 
-    // Sonido mágico
+    // Sonido mágico al abrir
     const magicSound =
         typeof Audio !== 'undefined' ? new Audio('/sounds/magic-sound.mp3') : null;
 
@@ -147,12 +143,11 @@ function EnvelopeSection() {
         if (magicSound) {
             magicSound.volume = 0.6;
         }
-    }, [magicSound]);
 
-    useEffect(() => {
+        // Animación inicial del sobre
         gsap.fromTo(
             envelopeRef.current,
-            { scale: 0.8, opacity: 0, y: 50 },
+            { scale: 0.8, opacity: 0, y: 40 },
             {
                 scale: 1,
                 opacity: 1,
@@ -161,32 +156,33 @@ function EnvelopeSection() {
                 ease: 'power3.out',
             }
         );
-    }, []);
+    }, [magicSound]);
 
     const openEnvelope = () => {
-        // Sonido mágico
+        // Reproducimos sonido mágico
         if (magicSound) {
             magicSound.play().catch(() => null);
         }
 
-        // Animación flip
+        // Flip animación
         gsap.to(envelopeRef.current, {
             rotationX: 180,
             duration: 1,
             ease: 'power2.inOut',
             onComplete: () => {
                 setIsOpen(true);
-                // Rebote de la invitación
+                // Efecto rebote en la tarjeta
                 gsap.fromTo(
                     '.invitation-card',
                     { scale: 0.8 },
                     { scale: 1, ease: 'elastic.out(1, 0.6)', duration: 0.8 }
                 );
+
                 // Música de fondo
                 if (typeof Audio !== 'undefined') {
                     const bgMusic = new Audio('/sounds/cinderella-instrumental.mp3');
                     bgMusic.loop = true;
-                    bgMusic.volume = 0.05; // Volumen bajo
+                    bgMusic.volume = 0.05;
                     bgMusic.play().catch(() => null);
                 }
                 setShowStars(true);
@@ -195,8 +191,8 @@ function EnvelopeSection() {
     };
 
     return (
-        <div className="relative flex flex-col items-center justify-center min-h-screen p-4">
-            {/* SOBRE CERRADO */}
+        <div className="flex flex-col items-center justify-center min-h-screen p-4">
+            {/* Sobre cerrado */}
             {!isOpen && (
                 <div
                     ref={envelopeRef}
@@ -206,10 +202,7 @@ function EnvelopeSection() {
                 >
                     <div
                         className="absolute inset-0 flex items-center justify-center"
-                        style={{
-                            backfaceVisibility: 'hidden',
-                            WebkitBackfaceVisibility: 'hidden',
-                        }}
+                        style={{ backfaceVisibility: 'hidden' }}
                     >
                         <img
                             src="/images/sobre.jpg"
@@ -217,7 +210,7 @@ function EnvelopeSection() {
                             className="w-full h-full object-cover rounded-md shadow-lg"
                         />
                         <div className="absolute flex flex-col items-center justify-center">
-                            <h2 className="font-cursiva text-white text-3xl sm:text-4xl drop-shadow-md">
+                            <h2 className="font-cursiva text-white text-4xl drop-shadow-lg">
                                 N B
                             </h2>
                             <p className="text-white text-sm mt-2 animate-bounce-slow">
@@ -230,43 +223,37 @@ function EnvelopeSection() {
                         style={{
                             transform: 'rotateX(180deg)',
                             backfaceVisibility: 'hidden',
-                            WebkitBackfaceVisibility: 'hidden',
                         }}
                     />
                 </div>
             )}
 
-            {/* TARJETA DE INVITACIÓN AL ABRIR */}
+            {/* Tarjeta abierta */}
             {isOpen && (
                 <motion.div
                     initial={{ opacity: 0, rotateY: 180 }}
                     animate={{ opacity: 1, rotateY: 0 }}
                     transition={{ duration: 1, ease: 'easeInOut' }}
-                    className="invitation-card max-w-sm w-full bg-white/30 backdrop-blur-md p-4 rounded-xl shadow-2xl mt-4 text-white relative"
+                    className="invitation-card max-w-sm w-full bg-white/20 backdrop-blur-md p-4 rounded-xl shadow-2xl mt-6 text-white relative"
                     style={{ transformStyle: 'preserve-3d' }}
                 >
-                    <div
-                        className="absolute inset-0 bg-roses-pattern bg-cover bg-center opacity-30 pointer-events-none rounded-xl"
-                        aria-hidden="true"
-                    />
                     <InvitationContent />
                 </motion.div>
             )}
 
-            {/* ESTRELLITAS MÁGICAS */}
+            {/* Estrellitas doradas */}
             {showStars && <MagicStars />}
         </div>
     );
 }
 
-/** MagicStars: Estrellitas doradas */
+// ============ ESTRELLITAS DORADAS =============
 function MagicStars() {
     const containerRef = useRef(null);
 
     useEffect(() => {
         const starCount = 25;
         const stars = [];
-
         for (let i = 0; i < starCount; i++) {
             const star = document.createElement('div');
             star.className = 'magic-star';
@@ -280,10 +267,9 @@ function MagicStars() {
                 yPercent: -50,
                 x: '50vw',
                 y: '50vh',
-                opacity: 1,
                 scale: 0,
+                opacity: 1,
             });
-
             const finalX = 50 + gsap.utils.random(-30, 30);
             const finalY = 50 + gsap.utils.random(-30, 30);
             const duration = gsap.utils.random(1, 2);
@@ -303,7 +289,6 @@ function MagicStars() {
                 },
             });
         });
-
         return () => {
             while (containerRef.current?.firstChild) {
                 containerRef.current.removeChild(containerRef.current.firstChild);
@@ -342,105 +327,88 @@ function MagicStars() {
     );
 }
 
-/** InvitationContent: Secciones con animaciones extra */
+// ========== CONTENIDO INVITACIÓN =============
 function InvitationContent() {
     return (
-        <div className="relative z-10 mx-auto py-4 sm:px-4">
-            <SectionWrapper icon="/images/love.png">
+        <div className="relative z-10 p-4">
+            {/* Cada sección envuelta en su animación. */}
+            <AnimatedSection>
                 <Encabezado />
-            </SectionWrapper>
+            </AnimatedSection>
 
-            <SectionWrapper icon="/images/music.png">
+            <AnimatedSection>
                 <CancionSection />
-            </SectionWrapper>
+            </AnimatedSection>
 
-            <SectionWrapper icon="/images/smile.png">
+            <AnimatedSection>
                 <MensajeBienvenida />
-            </SectionWrapper>
+            </AnimatedSection>
 
-            <SectionWrapper icon="/images/dresscode.png">
+            <AnimatedSection>
                 <Vestimenta />
-            </SectionWrapper>
+            </AnimatedSection>
 
-            <SectionWrapper icon="/images/evento.png">
+            <AnimatedSection>
                 <DetallesEvento />
-            </SectionWrapper>
+            </AnimatedSection>
 
-            <SectionWrapper icon="/images/gift.png">
+            <AnimatedSection>
                 <Regalos />
-            </SectionWrapper>
+            </AnimatedSection>
 
-            <SectionWrapper icon="/images/clock.png">
+            <AnimatedSection>
                 <CuentaRegresivaSection />
-            </SectionWrapper>
+            </AnimatedSection>
 
-            <SectionWrapper icon="/images/confirm.png">
+            <AnimatedSection>
                 <Confirmacion />
-            </SectionWrapper>
+            </AnimatedSection>
 
-            <SectionWrapper icon="/images/magic.svg">
+            <AnimatedSection>
                 <Cierre />
-            </SectionWrapper>
+            </AnimatedSection>
         </div>
     );
 }
 
-/**
- * SectionWrapper:
- * - Se anima de izquierda a derecha y se repite cada vez que entra al viewport.
- * - Se elimina once:true para que se repita siempre que scroll aparezca en pantalla.
- */
-function SectionWrapper({ children, icon = '/images/default.png' }) {
-    // Variantes con Framer Motion
-    const cardVariants = {
-        hidden: { opacity: 0, x: -50, rotate: -2 },
+// ========== WRAPPER CON ANIMACIÓN REPETIBLE =============
+function AnimatedSection({ children }) {
+    // Variantes de animación
+    const variants = {
+        hidden: { opacity: 0, x: 30, rotate: 2 },
         show: {
             opacity: 1,
             x: 0,
             rotate: 0,
-            transition: { duration: 0.8, ease: 'easeOut' },
+            transition: { duration: 0.6, ease: 'easeOut' },
         },
     };
 
     return (
-        <motion.section
-            variants={cardVariants}
+        <motion.div
+            className="my-6"
+            variants={variants}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: false }} // <-- Animación se repite al volver a entrar al viewport
-            className="mb-10 relative"
+            viewport={{ once: false }}
         >
-            {/* Ícono en círculo */}
-            <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 z-10">
-                <div className="bg-white/80 w-14 h-14 rounded-full shadow-lg border-2 border-white flex items-center justify-center">
-                    <img src={icon} alt="Ícono sección" className="w-12 h-12" />
-                </div>
-            </div>
-
-            {/* Tarjeta con un pequeño tilt al hover (solo en desktop) */}
-            <motion.div
-                className="bg-white/20 backdrop-blur-md p-4 rounded-xl shadow-lg pt-10"
-                whileHover={{ scale: 1.02 }}
-                transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-            >
-                {children}
-            </motion.div>
-        </motion.section>
+            {children}
+        </motion.div>
     );
 }
 
-/* Encabezado con Corona */
+/** ====== Encabezado ====== */
 function Encabezado() {
     return (
         <div className="text-center">
-            <div className="flex justify-center mb-4">
+            <div className="flex justify-center mb-2">
                 <img
                     src="/images/crown.webp"
                     alt="Corona"
-                    className="w-128 h-128 sm:w-40 sm:h-40 shimmer"
+                    className="w-24 h-24 shimmer"
                 />
             </div>
-            <h1 className="text-4xl sm:text-5xl font-cursiva text-white mb-2 leading-tight">
+            <h1 className="text-5xl sm:text-6xl font-cursiva text-yellow-300 mb-2 leading-tight drop-shadow-lg font-extrabold">
                 Nahara Benítez
             </h1>
             <h2 className="text-xl sm:text-2xl font-bold text-gold mb-2">
@@ -453,16 +421,16 @@ function Encabezado() {
     );
 }
 
-/** CancionSection con SongPlayer */
+/** CancionSection */
 function CancionSection() {
     return (
-        <div>
+        <div className="text-center text-white">
             <SongPlayer />
         </div>
     );
 }
 
-/** Mensaje de Bienvenida */
+/** MensajeBienvenida */
 function MensajeBienvenida() {
     return (
         <div className="text-center text-white font-body">
@@ -484,7 +452,7 @@ function MensajeBienvenida() {
     );
 }
 
-/** Efecto de Estrella (Twinkle) */
+/** Estrellitas TwinkleStar */
 function TwinkleStar() {
     const starRef = useRef(null);
 
@@ -516,8 +484,7 @@ function Vestimenta() {
         <div className="text-center text-white font-body">
             <h3 className="text-lg sm:text-xl font-semibold mb-2">Vestimenta</h3>
             <p className="mb-2 text-sm sm:text-base">
-                Por favor,{' '}
-                <span className="text-red-500 font-bold">evita usar color celeste</span>.
+                Por favor, <span className="text-red-500 font-bold">evita usar color celeste</span>.
             </p>
             <div className="flex justify-center space-x-4 mt-3">
                 <img
@@ -535,17 +502,18 @@ function Vestimenta() {
     );
 }
 
-/** Detalles del Evento (Map Fixed) */
+/** DetallesEvento */
 function DetallesEvento() {
     return (
         <div className="text-center text-white font-body">
-            <h3 className="text-2xl font-semibold mb-4">Detalles del Evento</h3>
-            <div className="mb-6 rounded-lg overflow-hidden shadow-lg">
-                {/* MAPA REPARADO (responsive para mobile) */}
+            <h3 className="text-xl sm:text-2xl font-semibold mb-4">
+                Detalles del Evento
+            </h3>
+            <div className="mb-4 rounded-lg overflow-hidden shadow-md">
                 <iframe
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3453.0504062794084!2d-58.2565388!3d-34.9574496!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95a2d17a03d49181%3A0x1ab2627a71646070!2sLa%20escondida!5e1!3m2!1ses-419!2sar!4v1737215128097!5m2!1ses-419!2sar"
                     width="100%"
-                    height="300"
+                    height="250"
                     style={{ border: 0 }}
                     allowFullScreen=""
                     loading="lazy"
@@ -553,7 +521,7 @@ function DetallesEvento() {
                     title="Mapa de La Escondida"
                 />
             </div>
-            <div className="mb-6 text-sm sm:text-base">
+            <div className="mb-4 text-sm sm:text-base">
                 <p className="mb-2">
                     <strong>Fecha:</strong> 15 de febrero de 2025
                 </p>
@@ -570,15 +538,14 @@ function DetallesEvento() {
                         href="https://maps.app.goo.gl/x9KMYniAC57wjMxH8"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="bg-blue-300 text-white px-6 py-3 rounded-md shadow-lg flex items-center justify-center hover:bg-blue-400 hover:text-blue-100 transition-colors duration-300 text-sm sm:text-base"
-                        style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.5)' }}
+                        className="bg-blue-300 text-white px-6 py-2 rounded-md shadow-lg hover:bg-blue-400 hover:text-blue-100 transition-colors duration-300 text-sm sm:text-base"
                     >
                         Ver Ubicación en Google Maps
                     </a>
                     <motion.img
                         src="/images/pointing.png"
                         alt="Dedo Apuntando"
-                        className="absolute -bottom-5 left-1/2 transform -translate-x-1/2 w-8 h-8 opacity-0 group-hover:opacity-100"
+                        className="absolute -bottom-5 left-1/2 transform -translate-x-1/2 w-6 h-6 sm:w-8 sm:h-8 opacity-0 group-hover:opacity-100"
                         initial={{ y: 10, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{
@@ -595,7 +562,7 @@ function DetallesEvento() {
     );
 }
 
-/** Sección de Regalos */
+/** Regalos */
 function Regalos() {
     return (
         <div className="text-center text-white font-body">
@@ -606,11 +573,11 @@ function Regalos() {
     );
 }
 
-/** Sección de Cuenta Regresiva */
+/** CuentaRegresivaSection */
 function CuentaRegresivaSection() {
     return (
         <div className="text-center text-white font-body">
-            <h3 className="text-lg sm:text-xl font-semibold mb-4">
+            <h3 className="text-lg sm:text-xl font-semibold mb-2">
                 Cuenta Regresiva
             </h3>
             <p className="mb-2 text-sm sm:text-base">
@@ -635,25 +602,10 @@ function Confirmacion() {
                 href="https://forms.gle/c1BqDDLP8jfZFC5VA"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-blue-400 text-white px-4 py-2 mt-3 inline-block rounded-md hover:bg-blue-300 hover:text-gray-200 transition-colors text-sm sm:text-base"
+                className="bg-blue-400 text-white px-4 py-2 mt-2 inline-block rounded-md hover:bg-blue-300 hover:text-gray-200 transition-colors text-sm sm:text-base"
             >
                 Confirmar asistencia
             </a>
-            <motion.img
-                src="/images/pointing.png"
-                alt="Dedo Apuntando"
-                className="absolute -bottom-5 left-1/2 transform -translate-x-1/2 w-8 h-8 opacity-0 group-hover:opacity-100"
-                initial={{ y: 10, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{
-                    delay: 0.3,
-                    duration: 0.5,
-                    repeat: Infinity,
-                    repeatType: 'reverse',
-                    ease: 'easeInOut',
-                }}
-            />
-
         </div>
     );
 }

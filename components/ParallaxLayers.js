@@ -44,7 +44,7 @@ export default function ParallaxLayers() {
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     zIndex: 2,
-                    opacity: 0.9,
+                    opacity: 0.4,
                 }}
             />
         </>
