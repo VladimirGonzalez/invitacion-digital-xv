@@ -555,7 +555,7 @@ function DetallesEvento() {
             </div>
             <div className="mb-6 text-sm sm:text-base">
                 <p className="mb-2">
-                    <strong>Fecha:</strong> 15 y 16 de febrero de 2025
+                    <strong>Fecha:</strong> 15 de febrero de 2025
                 </p>
                 <p className="mb-2">
                     <strong>Hora:</strong> 21:30 hrs
