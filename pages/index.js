@@ -3,17 +3,25 @@ import Head from 'next/head';
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
-
 import SongPlayer from '../components/SongPlayer';
 import ParallaxLayers from '../components/ParallaxLayers';
 import SparkleOverlay from '../components/SparkleOverlay';
 import ParticlesBackground from '../components/ParticlesBackground';
 import Countdown from '../components/Countdown';
+import dynamic from 'next/dynamic';
 
-/* 
-  1) Corazones flotando estilo Cenicienta 
-  - Reemplaza HEART.png con la imagen de corazón que tengas en /public/images.
-*/
+// Importamos mariposas Lottie sin SSR:
+const ButterflyLottie = dynamic(() => import('../components/ButterflyLottie'), {
+    ssr: false,
+});
+
+{/* Mariposas volando */ }
+<div className="absolute inset-0 z-20 pointer-events-none">
+    <ButterflyLottie />
+</div>
+/* ========================================
+   1) Corazones flotando estilo Cenicienta
+======================================== */
 function HeartsOverlay() {
     const containerRef = useRef(null);
 
@@ -73,8 +81,46 @@ function HeartsOverlay() {
     );
 }
 
+/* ========================================
+   2) Intro Cinemática (Pantalla de Carga)
+======================================== */
+function IntroScreen({ onFinish }) {
+    const [show, setShow] = useState(true);
+
+    // Puedes cambiar la duración de la intro a gusto.
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setShow(false);
+            onFinish();
+        }, 3000); // 3 segundos de intro
+        return () => clearTimeout(timer);
+    }, [onFinish]);
+
+    if (!show) return null;
+
+    return (
+        <div className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center text-white">
+            <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.8 }}
+                className="text-center"
+            >
+                <h1 className="text-4xl sm:text-6xl font-cursiva text-yellow-300 mb-4">
+                    Bienvenido(a)
+                </h1>
+                <p className="text-sm sm:text-base">
+                    Cargando tu invitación mágica...
+                </p>
+            </motion.div>
+        </div>
+    );
+}
+
 // =============== PRINCIPAL ===============
 export default function Home() {
+    const [introFinished, setIntroFinished] = useState(false);
+
     return (
         <div className="relative w-full min-h-screen overflow-hidden text-shadow-sm bg-black">
             <Head>
@@ -105,44 +151,78 @@ export default function Home() {
             transform: translateY(-5px);
           }
         }
+        .shimmer {
+          animation: shimmerAnimation 2s infinite alternate;
+        }
+        @keyframes shimmerAnimation {
+          from {
+            filter: drop-shadow(0 0 5px #fff);
+          }
+          to {
+            filter: drop-shadow(0 0 15px #ffd700);
+          }
+        }
       `}</style>
 
-            {/* 1. Parallax de fondo */}
-            <div className="absolute inset-0 z-0 opacity-80">
-                <ParallaxLayers />
-            </div>
+            {/* Intro Cinemática */}
+            <IntroScreen onFinish={() => setIntroFinished(true)} />
 
-            {/* 2. Partículas + Sparkle */}
-            <div className="absolute inset-0 z-10 pointer-events-none">
-                <ParticlesBackground />
-            </div>
-            <SparkleOverlay />
+            {/* Sólo mostramos el contenido principal si terminó la intro */}
+            {introFinished && (
+                <>
+                    {/* 1. Parallax de fondo */}
+                    <div className="absolute inset-0 z-0">
+                        <ParallaxLayers />
+                    </div>
 
-            {/* 3. Corazones flotando */}
-            <HeartsOverlay />
+                    {/* 2. Partículas + Sparkle */}
+                    <div className="absolute inset-0 z-10 pointer-events-none">
+                        <ParticlesBackground />
+                    </div>
+                    <SparkleOverlay />
 
-            {/* 4. Contenido principal */}
-            <div className="relative z-30">
-                <EnvelopeSection />
-            </div>
+                    {/* 3. Corazones flotando */}
+                    <HeartsOverlay />
+
+                    {/* 4. Contenido principal */}
+                    <MainContent />
+                </>
+            )}
         </div>
     );
 }
 
-// ============== SOBRE ANIMADO =============
+/* ========================================
+   CONTENIDO PRINCIPAL
+======================================== */
+function MainContent() {
+    return (
+        <div className="relative z-30">
+            <EnvelopeSection />
+        </div>
+    );
+}
+
+/* ========================================
+   SOBRE ANIMADO (ahora con sello lacrado)
+======================================== */
 function EnvelopeSection() {
     const [isOpen, setIsOpen] = useState(false);
     const [showStars, setShowStars] = useState(false);
+    const [bgMusic, setBgMusic] = useState(null);
+    const [isMusicOn, setIsMusicOn] = useState(false); // Para controlar la música
     const envelopeRef = useRef(null);
 
     // Sonido mágico al abrir
-    const magicSound =
-        typeof Audio !== 'undefined' ? new Audio('/sounds/magic-sound.mp3') : null;
+    const magicSoundRef = useRef(null);
+
+    // Sello (opcional) => ajusta la imagen como gustes
+    const sealRef = useRef(null);
 
     useEffect(() => {
-        if (magicSound) {
-            magicSound.volume = 0.6;
-        }
+        // Inicializamos el sonido mágico
+        magicSoundRef.current = new Audio('/sounds/magic-sound.mp3');
+        magicSoundRef.current.volume = 0.6;
 
         // Animación inicial del sobre
         gsap.fromTo(
@@ -156,12 +236,12 @@ function EnvelopeSection() {
                 ease: 'power3.out',
             }
         );
-    }, [magicSound]);
+    }, []);
 
     const openEnvelope = () => {
         // Reproducimos sonido mágico
-        if (magicSound) {
-            magicSound.play().catch(() => null);
+        if (magicSoundRef.current) {
+            magicSoundRef.current.play().catch(() => null);
         }
 
         // Flip animación
@@ -179,20 +259,69 @@ function EnvelopeSection() {
                 );
 
                 // Música de fondo
-                if (typeof Audio !== 'undefined') {
-                    const bgMusic = new Audio('/sounds/cinderella-instrumental.mp3');
-                    bgMusic.loop = true;
-                    bgMusic.volume = 0.05;
-                    bgMusic.play().catch(() => null);
-                }
+                const bgMusicAudio = new Audio('/sounds/cinderella-instrumental.mp3');
+                bgMusicAudio.loop = true;
+                bgMusicAudio.volume = 0.0; // Arranca en 0 para hacer fade in
+                bgMusicAudio.play().catch(() => null);
+
+                setBgMusic(bgMusicAudio);
+
+                // Hacemos fade in de la música
+                gsap.to(bgMusicAudio, {
+                    volume: 0.05,
+                    duration: 2, // 2 segundos de fade
+                    onComplete: () => {
+                        setIsMusicOn(true);
+                    },
+                });
+
                 setShowStars(true);
             },
         });
     };
 
+    const toggleMusic = () => {
+        if (!bgMusic) return;
+        if (isMusicOn) {
+            // Fade out
+            gsap.to(bgMusic, {
+                volume: 0,
+                duration: 1,
+                onComplete: () => {
+                    bgMusic.pause();
+                    setIsMusicOn(false);
+                },
+            });
+        } else {
+            // Reanudar
+            bgMusic.play().catch(() => null);
+            // Fade in
+            gsap.to(bgMusic, {
+                volume: 0.05,
+                duration: 1,
+                onComplete: () => {
+                    setIsMusicOn(true);
+                },
+            });
+        }
+    };
+
     return (
         <div className="flex flex-col items-center justify-center min-h-screen p-4">
-            {/* Sobre cerrado */}
+            {/* Botón para silenciar / reanudar música (arriba a la derecha) */}
+            {bgMusic && (
+                <div className="fixed top-4 right-4 z-50">
+                    <button
+                        onClick={toggleMusic}
+                        className="bg-black bg-opacity-50 text-white p-2 rounded-full shadow-md hover:bg-opacity-70 transition"
+                        title="Toggle Música"
+                    >
+                        {isMusicOn ? '🔊' : '🔇'}
+                    </button>
+                </div>
+            )}
+
+            {/* Sobre cerrado con sello lacrado */}
             {!isOpen && (
                 <div
                     ref={envelopeRef}
@@ -200,6 +329,7 @@ function EnvelopeSection() {
                     style={{ transformStyle: 'preserve-3d' }}
                     onClick={openEnvelope}
                 >
+                    {/* Imagen del sobre */}
                     <div
                         className="absolute inset-0 flex items-center justify-center"
                         style={{ backfaceVisibility: 'hidden' }}
@@ -209,15 +339,20 @@ function EnvelopeSection() {
                             alt="Sobre cerrado"
                             className="w-full h-full object-cover rounded-md shadow-lg"
                         />
-                        <div className="absolute flex flex-col items-center justify-center">
-                            <h2 className="font-cursiva text-white text-4xl drop-shadow-lg">
-                                N B
-                            </h2>
-                            <p className="text-white text-sm mt-2 animate-bounce-slow">
-                                Toca para abrir
-                            </p>
+                        {/* Sello lacrado en el centro */}
+                        <div
+                            ref={sealRef}
+                            className="absolute flex items-center justify-center"
+                        >
+                            <img
+                                src="/images/sello-lacre.png"
+                                alt="Sello lacrado NB"
+                                className="w-16 h-16 drop-shadow-lg"
+                            />
                         </div>
                     </div>
+
+                    {/* Parte trasera del sobre */}
                     <div
                         className="absolute inset-0 bg-gray-200 rounded-md shadow-lg"
                         style={{
@@ -247,7 +382,9 @@ function EnvelopeSection() {
     );
 }
 
-// ============ ESTRELLITAS DORADAS =============
+/* ========================================
+   ESTRELLITAS DORADAS
+======================================== */
 function MagicStars() {
     const containerRef = useRef(null);
 
@@ -327,11 +464,16 @@ function MagicStars() {
     );
 }
 
-// ========== CONTENIDO INVITACIÓN =============
+/* ========================================
+   CONTENIDO INVITACIÓN
+======================================== */
 function InvitationContent() {
+
     return (
         <div className="relative z-10 p-4">
-            {/* Cada sección envuelta en su animación. */}
+            <ButterflyLottie />
+
+
             <AnimatedSection>
                 <Encabezado />
             </AnimatedSection>
@@ -367,13 +509,15 @@ function InvitationContent() {
             <AnimatedSection>
                 <Cierre />
             </AnimatedSection>
+
         </div>
     );
 }
 
-// ========== WRAPPER CON ANIMACIÓN REPETIBLE =============
+/* ========================================
+   WRAPPER DE ANIMACIÓN
+======================================== */
 function AnimatedSection({ children }) {
-    // Variantes de animación
     const variants = {
         hidden: { opacity: 0, x: 30, rotate: 2 },
         show: {
@@ -397,7 +541,9 @@ function AnimatedSection({ children }) {
     );
 }
 
-/** ====== Encabezado ====== */
+/* ========================================
+   SECCIONES DE CONTENIDO ESPECÍFICAS
+======================================== */
 function Encabezado() {
     return (
         <div className="text-center">
@@ -405,13 +551,13 @@ function Encabezado() {
                 <img
                     src="/images/crown.webp"
                     alt="Corona"
-                    className="w-24 h-24 shimmer"
+                    className="w-32 h-32 shimmer"
                 />
             </div>
-            <h1 className="text-5xl sm:text-6xl font-cursiva text-yellow-300 mb-2 leading-tight drop-shadow-lg font-extrabold">
+            <h1 className="text-5xl sm:text-6xl font-cursiva text-white mb-2 leading-tight drop-shadow-lg font-extrabold">
                 Nahara Benítez
             </h1>
-            <h2 className="text-xl sm:text-2xl font-bold text-gold mb-2">
+            <h2 className="text-xl sm:text-2xl font-bold text-gold italic mb-2">
                 Mis 15 Años
             </h2>
             <p className="text-sm sm:text-base text-white italic font-body">
@@ -421,7 +567,6 @@ function Encabezado() {
     );
 }
 
-/** CancionSection */
 function CancionSection() {
     return (
         <div className="text-center text-white">
@@ -430,7 +575,6 @@ function CancionSection() {
     );
 }
 
-/** MensajeBienvenida */
 function MensajeBienvenida() {
     return (
         <div className="text-center text-white font-body">
@@ -452,7 +596,6 @@ function MensajeBienvenida() {
     );
 }
 
-/** Estrellitas TwinkleStar */
 function TwinkleStar() {
     const starRef = useRef(null);
 
@@ -478,13 +621,15 @@ function TwinkleStar() {
     );
 }
 
-/** Vestimenta */
 function Vestimenta() {
     return (
         <div className="text-center text-white font-body">
             <h3 className="text-lg sm:text-xl font-semibold mb-2">Vestimenta</h3>
             <p className="mb-2 text-sm sm:text-base">
-                Por favor, <span className="text-red-500 font-bold">evita usar color celeste</span>.
+                Por favor,{" "}
+                <span className="text-red-500 font-bold">
+                    evita usar color celeste
+                </span>.
             </p>
             <div className="flex justify-center space-x-4 mt-3">
                 <img
@@ -502,7 +647,6 @@ function Vestimenta() {
     );
 }
 
-/** DetallesEvento */
 function DetallesEvento() {
     return (
         <div className="text-center text-white font-body">
@@ -562,7 +706,6 @@ function DetallesEvento() {
     );
 }
 
-/** Regalos */
 function Regalos() {
     return (
         <div className="text-center text-white font-body">
@@ -573,7 +716,6 @@ function Regalos() {
     );
 }
 
-/** CuentaRegresivaSection */
 function CuentaRegresivaSection() {
     return (
         <div className="text-center text-white font-body">
@@ -588,7 +730,6 @@ function CuentaRegresivaSection() {
     );
 }
 
-/** Confirmacion */
 function Confirmacion() {
     return (
         <div className="text-center text-white font-body relative">
@@ -610,7 +751,6 @@ function Confirmacion() {
     );
 }
 
-/** Cierre */
 function Cierre() {
     return (
         <div className="text-center text-white font-body">

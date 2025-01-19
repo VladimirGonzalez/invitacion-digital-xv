@@ -53,3 +53,105 @@ body {
   box-shadow: 0 0 6px 2px rgba(255, 215, 0, 0.6);
   z-index: 9999;
 }
+
+/* =========================================
+   MARIPOSAS / SPRITE
+========================================= */
+.butterflies {
+  position: relative;
+  width: 100%;
+  height: 500px; /* O lo que desees */
+  overflow: hidden;
+  pointer-events: none; /* Para que no interfiera con clics */
+  z-index: 20; /* Ajusta si quieres que pasen encima o debajo de otros elementos */
+}
+
+/* Contenedor que se mueve (vuelo horizontal) */
+.butterfly-container {
+  position: absolute;
+  top: 30%;
+  left: -20%;
+  transform: translateX(0) scale(0.5);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+/* Ajusta los diferentes tiempos, delays, etc. */
+.butterfly-container--one {
+  animation-name: fly-right-one;
+  animation-duration: 12s;
+  animation-delay: 0s;
+}
+.butterfly-container--two {
+  animation-name: fly-right-two;
+  animation-duration: 14s;
+  animation-delay: 2s;
+}
+
+/* Keyframes de trayectoria (puedes personalizar más puntos) */
+@keyframes fly-right-one {
+  0% {
+    transform: translateX(-10vw) translateY(0vh) scale(0.5);
+  }
+  25% {
+    transform: translateX(30vw) translateY(-3vh) scale(0.6);
+  }
+  50% {
+    transform: translateX(60vw) translateY(2vh) scale(0.7);
+  }
+  75% {
+    transform: translateX(90vw) translateY(-2vh) scale(0.6);
+  }
+  100% {
+    transform: translateX(110vw) translateY(0vh) scale(0.5);
+  }
+}
+
+@keyframes fly-right-two {
+  0% {
+    transform: translateX(-15vw) translateY(2vh) scale(0.4);
+  }
+  25% {
+    transform: translateX(15vw) translateY(-2vh) scale(0.5);
+  }
+  50% {
+    transform: translateX(45vw) translateY(2vh) scale(0.6);
+  }
+  75% {
+    transform: translateX(75vw) translateY(0vh) scale(0.7);
+  }
+  100% {
+    transform: translateX(120vw) translateY(-2vh) scale(0.5);
+  }
+}
+
+/* La mariposa en sí (sprite animado) */
+.butterfly {
+  background-image: url('/images/css_sprites.png');
+  width: 128px;   /* Ancho de un frame */
+  height: 128px;  /* Alto de un frame */
+  background-size: auto 100%;
+  will-change: background-position;
+  animation-name: flap-cycle;
+  animation-timing-function: steps(6); /* 6 frames */
+  animation-iteration-count: infinite;
+}
+
+/* Diferentes duraciones o delays en el aleteo */
+.butterfly--one {
+  animation-duration: 1s; 
+  animation-delay: 0s;
+}
+.butterfly--two {
+  animation-duration: 1.2s;
+  animation-delay: -0.5s;
+}
+
+/* Keyframes del sprite (aleteo). SOLO UNO, unificado */
+@keyframes flap-cycle {
+  100% {
+    /* 6 frames * 128px = 768px */
+    background-position: -768px 0; 
+  }
+}
