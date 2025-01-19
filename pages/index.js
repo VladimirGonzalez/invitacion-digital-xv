@@ -132,8 +132,20 @@ export default function Home() {
                     name="description"
                     content="Invitación digital alucinante para XV años temática Cenicienta"
                 />
-            </Head>
 
+                {/* Etiquetas Open Graph */}
+                <meta property="og:title" content="Invitación XV - Nahara Benítez" />
+                <meta property="og:description" content="Invitación digital alucinante para XV años temática Cenicienta" />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://invitacion-digital-xv.vercel.app/" />
+                <meta property="og:image" content="https://invitacion-digital-xv.vercel.app/images/thumbnail.png" />
+                <meta property="og:image:width" content="1200" />
+                <meta property="og:image:height" content="630" />
+
+                {/* Favicon */}
+                <link rel="icon" href="/favicon.ico" />
+                {/* Si tienes otras versiones del favicon, puedes agregarlas aquí */}
+            </Head>
             {/* Estilos Globales */}
             <style jsx global>{`
         .text-shadow-sm {

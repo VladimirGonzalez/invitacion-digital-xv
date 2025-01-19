@@ -52,7 +52,7 @@ export default function SongPlayer() {
             {/* Fondo decorativo sutil */}
             <div
                 className="absolute inset-0 bg-cover bg-center opacity-10 blur-md"
-                style={{ backgroundImage: "url('/images/music.png')" }}
+                style={{}}
                 aria-hidden="true"
             />
 
