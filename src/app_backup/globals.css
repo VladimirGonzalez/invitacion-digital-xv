@@ -25,7 +25,7 @@ body {
 }
 
 @keyframes sparklePulse {
-  0% { transform: scale(1) rotate(0deg); color: #FFD700; }
+  0% { transform: scale(1) rotate(0deg); color: #3bffff; }
   100% { transform: scale(1.2) rotate(15deg); color: #ffffff; }
 }
 
@@ -37,7 +37,7 @@ body {
   position: absolute;
   width: 16px;
   height: 16px;
-  background-color: #ffd700; /* amarillo dorado */
+  background-color: #00c8ff; /* amarillo dorado */
   clip-path: polygon(
     50% 0%,
     61% 35%,
@@ -50,7 +50,7 @@ body {
     2% 35%,
     39% 35%
   ); /* Una forma aproximada de estrella */
-  box-shadow: 0 0 6px 2px rgba(255, 215, 0, 0.6);
+  box-shadow: 0 0 6px 2px rgba(0, 204, 255, 0.6);
   z-index: 9999;
 }
 
@@ -153,5 +153,33 @@ body {
   100% {
     /* 6 frames * 128px = 768px */
     background-position: -768px 0; 
+  }
+}
+
+/* Efecto plateado para texto */
+.silver-text {
+  /* Degradado que simula tonos plateados */
+  background: linear-gradient(135deg, #e6e6e6, #cccccc, #ffffff, #cccccc, #e6e6e6);
+  
+  /* Ajuste para que el degradado cubra bien el texto */
+  background-size: 200% 200%;
+  
+  /* Aplicar el degradado sólo al texto */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  
+  /* Opcional: animación para un brillo sutil */
+  animation: silverShine 3s ease-in-out infinite;
+}
+
+@keyframes silverShine {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
   }
 }

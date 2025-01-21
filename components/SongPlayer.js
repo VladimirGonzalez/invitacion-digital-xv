@@ -44,79 +44,83 @@ export default function SongPlayer() {
 
     return (
         <motion.div
-            className="bg-white/10 backdrop-blur-md p-6 rounded-2xl shadow-2xl text-white relative overflow-hidden max-w-md mx-auto"
+            className="bg-white/20 backdrop-blur-md p-4 rounded-xl shadow-md text-white relative max-w-xs mx-auto"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
+            style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.6)', width: '18rem' }}
         >
-            {/* Fondo decorativo sutil */}
-            <div
-                className="absolute inset-0 bg-cover bg-center opacity-10 blur-md"
-                style={{}}
-                aria-hidden="true"
-            />
-
-            {/* Encabezado */}
-            <div className="flex items-center mb-4 relative">
-                <FaMusic className="text-white text-3xl animate-bounce mr-3" />
-                <h3 className="text-xl font-bold">Melodía Encantada</h3>
+            {/* Encabezado con ícono de música en estilo glassmorphism blanco */}
+            <div className="flex items-center mb-3 relative">
+                <div className="bg-white/20 backdrop-blur-md p-2 rounded-full mr-2 shadow-md">
+                    <FaMusic className="text-white text-2xl animate-bounce" />
+                </div>
+                <h3
+                    className="text-base font-bold drop-shadow-md"
+                    style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.6)' }}
+                >
+                    Melodía Encantada
+                </h3>
             </div>
 
-            <p className="italic text-sm text-center mb-4 relative">
-                "Deja que la música te envuelva..."
+            <p className="italic text-xs text-center mb-3">
+                ❤️Mi canción! Dale Play <span className="font-semibold">‣</span> Deja que la música te acompañe en el recorrido...
             </p>
 
-            {/* Botón de Reproducción */}
-            <div className="flex justify-center relative">
+            {/* Botón de Reproducción más pequeño */}
+            <div className="flex justify-center mb-3">
                 <motion.button
                     onClick={togglePlay}
-                    className={`w-20 h-20 rounded-full flex items-center justify-center shadow-lg transition-transform ${isPlaying ? 'bg-white' : 'bg-purple-600'
-                        }`}
+                    className={`w-12 h-12 rounded-full flex items-center justify-center shadow-md transition-transform ${isPlaying ? 'bg-white/30' : 'bg-blue-300'}`}
                     whileTap={{ scale: 0.9 }}
                     animate={{
                         scale: isPlaying ? 1.05 : 1,
                         transition: { type: 'spring', stiffness: 300 },
                     }}
+                    style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.4)' }}
                 >
                     {isPlaying ? (
-                        <FaPause className="text-purple-600 text-3xl" />
+                        <FaPause className="text-blue-300 text-xl" />
                     ) : (
-                        <FaPlay className="text-white text-3xl" />
+                        <FaPlay className="text-white text-xl" />
                     )}
                 </motion.button>
             </div>
 
-            {/* Ondas de sonido sincronizadas */}
+            {/* Ondas de sonido pulsantes */}
             {isPlaying && (
-                <div className="mt-6 flex justify-center space-x-2 relative">
+                <div className="mt-4 flex justify-center space-x-2">
                     {[...Array(5)].map((_, i) => (
                         <motion.div
                             key={i}
-                            className="w-2 bg-white rounded-full"
-                            style={{ height: '2rem' }}
-                            animate={{ scaleY: [1, 2, 1] }}
+                            className="bg-white rounded-full shadow-md"
+                            style={{ width: '0.55rem', height: '0.55rem' }}
+                            animate={{ scale: [1, 2.5, 1], opacity: [1, 0.3, 1] }}
                             transition={{
-                                duration: 0.6,
+                                duration: 4.2,
                                 repeat: Infinity,
                                 ease: 'easeInOut',
-                                delay: i * 0.1,
+                                delay: i * 0.2,
                             }}
                         />
                     ))}
                 </div>
             )}
 
-            {/* Barra de Progreso */}
+            {/* Barra de Progreso estilizada con degradado celeste a oro */}
             <div className="mt-4 h-2 bg-gray-300 bg-opacity-50 rounded-full overflow-hidden relative">
                 <motion.div
-                    className="h-full bg-white"
+                    className="h-full"
+                    style={{
+                        background: 'linear-gradient(90deg, #B2DFFC, #FFD700)',
+                    }}
                     animate={{ width: `${progress}%` }}
                     transition={{ ease: 'linear', duration: 0.3 }}
                 />
             </div>
 
             {/* Tiempo de reproducción */}
-            <div className="flex justify-between text-xs text-gray-200 mt-2 relative">
+            <div className="flex justify-between text-xs text-gray-200 mt-2">
                 <span>0:00</span>
                 <span>
                     {audio && !isNaN(audio.duration)
