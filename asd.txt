@@ -1,0 +1,131 @@
+Proyecto basado en: Next.js
+Exclusiones aplicadas: node_modules, .next, .git
+Ruta general: C:/Users/Usuario/Desktop/invitacion-digital-xv/invitacion-digital-xv
+Contenido del directorio:
+==================================================
+Directorio: .
+  Subdirectorios:
+    - components
+    - pages
+    - public
+    - src
+    - styles
+  Archivos:
+    - .eslintrc.json
+    - .gitignore
+    - .npmrc
+    - asd.txt
+    - eslint.config.mjs
+    - jsconfig.json
+    - next.config.mjs
+    - package-lock.json
+    - package.json
+    - postcss.config.mjs
+    - README.md
+    - tailwind.config.mjs
+
+Directorio: components
+  Subdirectorios:
+    - context
+    - slides
+  Archivos:
+    - ButterflyLottie.js
+    - Countdown.js
+    - EnvelopeSection.js
+    - HeartsOverlay.js
+    - IntroScreen.js
+    - MessageSection.js
+    - ModalForm.js
+    - MusicButton.js
+    - ParallaxLayers.js
+    - ParticlesBackground.js
+    - ScrollRevealSection.js
+    - SlidesWizard.js
+    - SongPlayer.js
+    - SparkleOverlay.js
+
+Directorio: components\context
+  Archivos:
+    - MusicContext.js
+
+Directorio: components\slides
+  Archivos:
+    - CancionSection.js
+    - ConfirmSlide.js
+    - CuentaRegresivaSection.js
+    - DetallesEvento.js
+    - Encabezado.js
+    - FinalSlide.js
+    - MensajeBienvenida.js
+    - Regalos.js
+    - Vestimenta.js
+
+Directorio: pages
+  Archivos:
+    - index.js
+    - _app.js
+    - _document.js
+
+Directorio: public
+  Subdirectorios:
+    - animations
+    - images
+    - sounds
+  Archivos:
+    - android-chrome-192x192.png
+    - android-chrome-512x512.png
+    - apple-touch-icon.png
+    - favicon-16x16.png
+    - favicon-32x32.png
+    - favicon.ico
+    - file.svg
+    - globe.svg
+    - next.svg
+    - site.webmanifest
+    - vercel.svg
+    - window.svg
+
+Directorio: public\animations
+  Archivos:
+    - butterfly.json
+
+Directorio: public\images
+  Archivos:
+    - background-cinderella.png
+    - cenicienta.webp
+    - clock.png
+    - clouds-magic.png
+    - Crop_crown.webp
+    - crown.PNG
+    - crown.webp
+    - dress.png
+    - HEART.png
+    - magic.svg
+    - pointing.png
+    - roses.png
+    - sello-lacre.png
+    - sobre.jpg
+    - thumbnail.png
+    - wedding-suit.png
+
+Directorio: public\sounds
+  Archivos:
+    - cinderella-instrumental.mp3
+    - magic-sound.mp3
+    - musica.mp3
+    - twinkle.mp3
+
+Directorio: src
+  Subdirectorios:
+    - app_backup
+
+Directorio: src\app_backup
+  Archivos:
+    - favicon.ico
+    - globals.css
+
+Directorio: styles
+  Archivos:
+    - globals.css
+    - Home.module.css
+
