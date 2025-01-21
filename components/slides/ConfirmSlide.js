@@ -21,7 +21,7 @@ export default function ConfirmSlide() {
         texto += `*Contacto (WhatsApp):* ${contacto || 'No proporcionado'}\n`;
 
         const encodedText = encodeURIComponent(texto);
-        const phoneNumber = '+5493329627578';
+        const phoneNumber = '+5491134232789';
         const whatsAppURL = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodedText}`;
 
         // Redirigir (o fetch, etc.)
