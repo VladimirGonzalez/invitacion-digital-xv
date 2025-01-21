@@ -63,13 +63,13 @@ export default function Home() {
                 <title>Invitación XV - Nahara Benítez</title>
                 <meta
                     name="description"
-                    content="Invitación digital alucinante para XV años temática Cenicienta"
+                    content="Estás invitad@ a mis XV! Esta es la invitación!"
                 />
                 {/* Metadatos Open Graph */}
                 <meta property="og:title" content="Invitación XV - Nahara Benítez" />
                 <meta
                     property="og:description"
-                    content="Invitación digital alucinante para XV años temática Cenicienta"
+                    content="Estás invitad@ a mis XV! Esta es la invitación!"
                 />
                 <meta property="og:type" content="website" />
                 <meta property="og:image" content="/images/thumbnail.png" />
