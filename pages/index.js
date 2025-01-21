@@ -1,29 +1,26 @@
 // pages/index.js
 import Head from 'next/head';
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { gsap } from 'gsap';
 
-// Efectos de Fondo
+// Efectos de Fondo y otros componentes
 import ParallaxLayers from '../components/ParallaxLayers';
 import SparkleOverlay from '../components/SparkleOverlay';
 import ParticlesBackground from '../components/ParticlesBackground';
 import HeartsOverlay from '../components/HeartsOverlay';
 import MusicButton from '../components/MusicButton';
-
-
-// SlidesWizard (el recorrido de diapositivas)
+import EnvelopeSection from '../components/EnvelopeSection';
 import SlidesWizard from '../components/SlidesWizard';
 
 /* Intro Cinemática */
 function IntroScreen({ onFinish }) {
     const [show, setShow] = useState(true);
 
-    useEffect(() => {
+    useState(() => {
         const timer = setTimeout(() => {
             setShow(false);
             onFinish();
-        }, 3000); // 3 segundos de intro
+        }, 3000);
         return () => clearTimeout(timer);
     }, [onFinish]);
 
@@ -55,6 +52,7 @@ function IntroScreen({ onFinish }) {
 
 export default function Home() {
     const [introFinished, setIntroFinished] = useState(false);
+    const [envelopeOpened, setEnvelopeOpened] = useState(false);
 
     return (
         <div className="relative w-full min-h-screen overflow-hidden bg-black text-shadow-sm">
@@ -69,12 +67,14 @@ export default function Home() {
                 />
                 {/* Metadatos Open Graph */}
                 <meta property="og:title" content="Invitación XV - Nahara Benítez" />
-                <meta property="og:description" content="Invitación digital alucinante para XV años temática Cenicienta" />
+                <meta
+                    property="og:description"
+                    content="Invitación digital alucinante para XV años temática Cenicienta"
+                />
                 <meta property="og:type" content="website" />
                 <meta property="og:image" content="/images/thumbnail.png" />
             </Head>
 
-            {/* Estilos Globales */}
             <style jsx global>{`
         .text-shadow-sm {
           text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
@@ -94,30 +94,42 @@ export default function Home() {
 
             {/* Intro Cinemática */}
             <AnimatePresence>
-                {!introFinished && <IntroScreen onFinish={() => setIntroFinished(true)} />}
+                {!introFinished && (
+                    <IntroScreen onFinish={() => setIntroFinished(true)} />
+                )}
             </AnimatePresence>
 
             {/* Contenido principal */}
             {introFinished && (
                 <>
-                    {/* Parallax de fondo */}
-                    <div className="absolute inset-0 z-0">
-                        <ParallaxLayers />
-                    </div>
-                    {/* Partículas y Sparkles */}
-                    <div className="absolute inset-0 z-10 pointer-events-none">
-                        <ParticlesBackground />
-                    </div>
-                    <SparkleOverlay />
+                    {/* Mostrar EnvelopeSection hasta que se abra */}
+                    {!envelopeOpened && (
+                        <div className="relative z-50 flex items-center justify-center min-h-screen">
+                            <EnvelopeSection onOpenComplete={() => setEnvelopeOpened(true)} />
+                        </div>
+                    )}
 
-                    {/* Corazones flotando */}
-                    <HeartsOverlay />
-
-                    {/* SlidesWizard: Presentamos la invitación en modo de diapositivas */}
-                    <div className="relative z-30 min-h-screen flex items-center justify-center p-4">
-                        <SlidesWizard />
-                        <MusicButton />
-                    </div>
+                    {/* Mostrar resto del contenido solo después de abrir el sobre */}
+                    {envelopeOpened && (
+                        <>
+                            {/* Parallax de fondo */}
+                            <div className="absolute inset-0 z-0">
+                                <ParallaxLayers />
+                            </div>
+                            {/* Partículas y Sparkles */}
+                            <div className="absolute inset-0 z-10 pointer-events-none">
+                                <ParticlesBackground />
+                            </div>
+                            <SparkleOverlay />
+                            {/* Corazones flotando */}
+                            <HeartsOverlay />
+                            {/* SlidesWizard y MusicButton */}
+                            <div className="relative z-30 min-h-screen flex items-center justify-center p-4">
+                                <SlidesWizard />
+                                <MusicButton />
+                            </div>
+                        </>
+                    )}
                 </>
             )}
         </div>
